@@ -43,7 +43,7 @@ function love.draw()
 	cam:attach()
 	love.graphics.draw(map)
 	local spriteNum = math.floor(current_animation.currentTime / current_animation.duration * #current_animation.quads)
-		+ 1
+			+ 1
 	local scaleX, scaleY = 2, 2
 	love.graphics.draw(
 		current_animation.spriteSheet,
@@ -161,14 +161,14 @@ function move(dt)
 	--colitions:
 	if player.x < 0 then
 		player.x = 0
-	elseif player.x + player.width > love.graphics.getWidth() then
-		player.x = love.graphics.getWidth() - player.width
+	elseif player.x + player.width > map_width then
+		player.x = map_width - player.width
 	end
 
 	if player.y < 0 then
 		player.y = 0
-	elseif player.y + player.height > love.graphics.getHeight() then
-		player.y = love.graphics.getHeight() - player.height
+	elseif player.y + player.height > map_height then
+		player.y = map_height - player.height
 	end
 
 	current_animation.currentTime = current_animation.currentTime + dt * animation_speed
@@ -180,9 +180,10 @@ end
 
 function DrawDebug()
 	local margin = 10
+	local offset = 20
 	local x_text_pos = love.graphics.getWidth() - margin - 100
 	local y_text_pos = love.graphics.getHeight() - margin - 20
 
 	draw_direction("x:", player.currentdirectionx, x_text_pos, y_text_pos)
-	draw_direction("y:", player.currentdirectiony, x_text_pos, y_text_pos - 20)
+	draw_direction("y:", player.currentdirectiony, x_text_pos, y_text_pos - offset)
 end
