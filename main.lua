@@ -1,9 +1,11 @@
 function love.load()
-	camera = require("lib/camera")
+	camera = require("libraries/camera")
 	cam = camera()
-
+	map = love.graphics.newImage("assets/maps/ace.jpg")
+	map_height = map:getHeight()
+	map_width = map:getWidth()
 	love.window.setMode(1280, 720)
-	love.window.setTitle("tiny zelda game")
+	love.window.setTitle("King of naipes")
 	love.graphics.setDefaultFilter("nearest", "nearest")
 	player = {}
 	player.x = 200
@@ -34,87 +36,26 @@ function love.load()
 end
 
 function love.update(dt)
-	local acceleration = 400
-	local friction = 300
-
-	local move_x, move_y = get_movement()
-	local moving = move_x ~= 0 or move_y ~= 0
-
-	local animation_speed = moving and 1.5 or 1
-	local magnitude = math.sqrt(move_x * move_x + move_y * move_y)
-	if magnitude > 0 then
-		move_x = move_x / magnitude
-		move_y = move_y / magnitude
-	end
-	if move_x > 0 then
-		player.currentdirection = 4 -- right
-		current_animation = animations[4]
-	end
-	if move_x < 0 then
-		player.currentdirection = 3 -- left
-		current_animation = animations[3]
-	end
-	if move_y > 0 then
-		player.currentdirection = 2 -- down
-		current_animation = animations[2]
-	end
-	if move_y < 0 then
-		player.currentdirection = 1 -- up
-		current_animation = animations[1]
-	end
-
-	-- Apply movement
-	player.x = player.x + player.speed * move_x * dt
-	player.y = player.y + player.speed * move_y * dt
-	-- Idle check if player is not moving
-	if not moving then
-		animation_speed = 1.2
-		current_animation = animations_idle[player.currentdirection]
-	end
-
-	if player.x < 0 then
-		player.x = 0
-	elseif player.x + player.width > love.graphics.getWidth() then
-		player.x = love.graphics.getWidth() - player.width
-	end
-
-	if player.y < 0 then
-		player.y = 0
-	elseif player.y + player.height > love.graphics.getHeight() then
-		player.y = love.graphics.getHeight() - player.height
-	end
-
-	-- Update animation time
-	current_animation.currentTime = current_animation.currentTime + dt * animation_speed
-	if current_animation.currentTime >= current_animation.duration then
-		current_animation.currentTime = current_animation.currentTime - current_animation.duration
-	end
+	move(dt)
 end
 
 function love.draw()
-	-- Draw the player
+	cam:attach()
+	love.graphics.draw(map)
 	local spriteNum = math.floor(current_animation.currentTime / current_animation.duration * #current_animation.quads)
 		+ 1
-	local scaleX, scaleY = 4, 4 -- Adjust these values to scale the sprite
+	local scaleX, scaleY = 2, 2
 	love.graphics.draw(
 		current_animation.spriteSheet,
 		current_animation.quads[spriteNum],
 		player.x,
-		player.y, -- Use player's position here
+		player.y,
 		0,
 		scaleX,
 		scaleY
 	)
-	-- love.graphics.setColor(1,1,1)
-	-- love.graphics.rectangle("fill", player.x, player.y, player.width, player.height)
-	-- love.graphics.polygon("fill", 60, 30, 3, 10, 19, 1)
-	-- love.graphics.circle("line" , 60, 60, 5, 40)
-	local margin = 10 -- Margin from the edges of the screen
-	local x_text_pos = love.graphics.getWidth() - margin - 100 -- Adjust 100 based on text length
-	local y_text_pos = love.graphics.getHeight() - margin - 20 -- Adjust 20 based on text height
 
-	draw_direction("x:", player.currentdirectionx, x_text_pos, y_text_pos)
-	draw_direction("y:", player.currentdirectiony, x_text_pos, y_text_pos - 20)
+	cam:detach()
 end
 
 function newAnimation(image, width, height, duration)
@@ -136,7 +77,7 @@ end
 
 function love.keypressed(key, scancode, isrepeat)
 	if key == "escape" then
-		love.event.quit(exitstatus)
+		love.event.quit(1)
 	end
 end
 
@@ -177,3 +118,71 @@ function draw_direction(name, current, x_text_pos, y_text_pos)
 end
 
 function draw_map() end
+
+function move(dt)
+	local acceleration = 400
+	local friction = 300
+
+	local move_x, move_y = get_movement()
+	local moving = move_x ~= 0 or move_y ~= 0
+
+	local animation_speed = moving and 1.5 or 1
+	local magnitude = math.sqrt(move_x * move_x + move_y * move_y)
+
+	if magnitude > 0 then
+		move_x = move_x / magnitude
+		move_y = move_y / magnitude
+	end
+	if move_x > 0 then
+		player.currentdirection = 4
+		current_animation = animations[4]
+	end
+	if move_x < 0 then
+		player.currentdirection = 3
+		current_animation = animations[3]
+	end
+	if move_y > 0 then
+		player.currentdirection = 2
+		current_animation = animations[2]
+	end
+	if move_y < 0 then
+		player.currentdirection = 1
+		current_animation = animations[1]
+	end
+
+	player.x = player.x + player.speed * move_x * dt
+	player.y = player.y + player.speed * move_y * dt
+
+	if not moving then
+		animation_speed = 1.2
+		current_animation = animations_idle[player.currentdirection]
+	end
+
+	--colitions:
+	if player.x < 0 then
+		player.x = 0
+	elseif player.x + player.width > love.graphics.getWidth() then
+		player.x = love.graphics.getWidth() - player.width
+	end
+
+	if player.y < 0 then
+		player.y = 0
+	elseif player.y + player.height > love.graphics.getHeight() then
+		player.y = love.graphics.getHeight() - player.height
+	end
+
+	current_animation.currentTime = current_animation.currentTime + dt * animation_speed
+	if current_animation.currentTime >= current_animation.duration then
+		current_animation.currentTime = current_animation.currentTime - current_animation.duration
+	end
+	cam:lookAt(player.x, player.y)
+end
+
+function DrawDebug()
+	local margin = 10
+	local x_text_pos = love.graphics.getWidth() - margin - 100
+	local y_text_pos = love.graphics.getHeight() - margin - 20
+
+	draw_direction("x:", player.currentdirectionx, x_text_pos, y_text_pos)
+	draw_direction("y:", player.currentdirectiony, x_text_pos, y_text_pos - 20)
+end
