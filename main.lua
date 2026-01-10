@@ -1,9 +1,14 @@
 function love.load()
+	local ogmo = require("libraries/ogmo")
+	local tileset = love.graphics.newImage("assets/tiles/Overworld_Tileset.png")
+	tileset:setFilter("nearest", "nearest")
+	tileset:setWrap("clamp", "clamp")
+	map = ogmo.read_map("maps/default.json", tileset)
 	camera = require("libraries/camera")
 	cam = camera()
-	map = love.graphics.newImage("assets/maps/ace.jpg")
-	map_height = map:getHeight()
-	map_width = map:getWidth()
+	cam:zoom(2)
+	map_height = map.height + 16
+	map_width = map.width + 16
 	love.window.setMode(1280, 720)
 	love.window.setTitle("King of naipes")
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -35,13 +40,26 @@ function love.load()
 	current_animation = animations_idle[2]
 end
 
+function love.wheelmoved(x, y)
+	if y > 0 then
+		zoom = zoom + 0.1
+	elseif y < 0 then
+		zoom = zoom - 0.1
+	end
+
+	zoom = math.max(0.5, math.min(zoom, 4)) -- clamp zoom
+	cam:zoomTo(zoom)
+end
+
 function love.update(dt)
 	move(dt)
 end
 
 function love.draw()
 	cam:attach()
-	love.graphics.draw(map)
+	if map then
+		map:draw(0, 0)
+	end
 	local spriteNum = math.floor(current_animation.currentTime / current_animation.duration * #current_animation.quads)
 			+ 1
 	local scaleX, scaleY = 2, 2

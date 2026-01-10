@@ -118,7 +118,10 @@ function camera:attach(x, y, w, h, noclip)
 	love.graphics.translate(cx, cy)
 	love.graphics.scale(self.scale)
 	love.graphics.rotate(self.rot)
-	love.graphics.translate(-self.x, -self.y)
+	-- Snap camera translation to pixel boundaries (account for scale)
+	local snapX = math.floor(self.x * self.scale + 0.5) / self.scale
+	local snapY = math.floor(self.y * self.scale + 0.5) / self.scale
+	love.graphics.translate(-snapX, -snapY)
 end
 
 function camera:detach()
