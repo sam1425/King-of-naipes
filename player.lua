@@ -12,30 +12,29 @@ player.moving = false
 function get_movement()
 	local move_x, move_y = 0, 0
 
-	if love.keyboard.isDown("a") then
+	local left = love.keyboard.isDown("a")
+	local right = love.keyboard.isDown("d")
+	local up = love.keyboard.isDown("w")
+	local down = love.keyboard.isDown("s")
+
+	if left and not right then
 		move_x = -1
 		player.currentdirection = 3
-		player.currentdirectionx = -1
-		moving = true
-	end
-	if love.keyboard.isDown("d") then
+	elseif right and not left then
 		move_x = 1
 		player.currentdirection = 4
-		player.currentdirectionx = 1
-		moving = true
 	end
-	if love.keyboard.isDown("w") then
+
+	if up and not down then
 		move_y = -1
 		player.currentdirection = 1
-		player.currentdirectiony = -1
-		moving = true
-	end
-	if love.keyboard.isDown("s") then
+	elseif down and not up then
 		move_y = 1
 		player.currentdirection = 2
-		player.currentdirectiony = 1
-		moving = true
 	end
+
+	player.currentdirectionx = move_x
+	player.currentdirectiony = move_y
 
 	return move_x, move_y
 end
@@ -130,7 +129,7 @@ animations_idle[4] = newAnimation(love.graphics.newImage("assets/idle_right.png"
 current_animation = animations_idle[2]
 function draw_player()
 	local spriteNum = math.floor(current_animation.currentTime / current_animation.duration * #current_animation.quads)
-		+ 1
+			+ 1
 	local scaleX, scaleY = 2, 2
 	love.graphics.draw(
 		current_animation.spriteSheet,
