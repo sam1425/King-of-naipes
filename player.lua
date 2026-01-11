@@ -7,7 +7,7 @@ player.height = 60
 player.currentdirectionx = 0
 player.currentdirectiony = 0
 player.currentdirection = 2
-player.moving = false
+--player.moving = false
 
 function get_movement()
 	local move_x, move_y = 0, 0
@@ -40,8 +40,8 @@ function get_movement()
 end
 
 function move(dt)
-	local acceleration = 400
-	local friction = 300
+	--local acceleration = 400
+	--local friction = 300
 
 	local move_x, move_y = get_movement()
 	local moving = move_x ~= 0 or move_y ~= 0
@@ -129,7 +129,7 @@ animations_idle[4] = newAnimation(love.graphics.newImage("assets/idle_right.png"
 current_animation = animations_idle[2]
 function draw_player()
 	local spriteNum = math.floor(current_animation.currentTime / current_animation.duration * #current_animation.quads)
-			+ 1
+		+ 1
 	local scaleX, scaleY = 2, 2
 	love.graphics.draw(
 		current_animation.spriteSheet,
