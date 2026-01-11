@@ -1,0 +1,21 @@
+
+function DrawDebug()
+	local function draw_direction(name, current, x_text_pos, y_text_pos)
+		love.graphics.print(name, x_text_pos + 70, y_text_pos)
+		love.graphics.print(current, x_text_pos + 10, y_text_pos)
+	end
+
+	local margin = 10
+	local offset = 20
+	local x_text_pos = love.graphics.getWidth() - margin - 100
+	local y_text_pos = love.graphics.getHeight() - margin - 20
+
+	draw_direction("x:", player.currentdirectionx, x_text_pos, y_text_pos)
+	draw_direction("y:", player.currentdirectiony, x_text_pos, y_text_pos - offset)
+end
+
+function love.keypressed(key) --, scancode, isrepeat)--
+	if key == "escape" then
+		love.event.quit(1)
+	end
+end

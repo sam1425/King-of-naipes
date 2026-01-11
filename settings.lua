@@ -1,3 +1,7 @@
 love.window.setMode(1280, 720)
 love.window.setTitle("King of naipes")
 love.graphics.setDefaultFilter("nearest", "nearest")
+love.graphics.setLineStyle("rough")
+local image = love.image.newImageData("assets/cursor/cursors/main.png")
+cursor = love.mouse.newCursor(image, 0, 0)
+love.mouse.setCursor(cursor)
