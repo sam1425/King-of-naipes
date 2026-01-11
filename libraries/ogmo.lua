@@ -35,6 +35,7 @@ function ogmo.read_map(path, texture)
 	map.data = json.decode(string)
 
 	map.layers = {}
+	map.layerOrder = {}
 	map.entities = {}
 	map.width = map.data.width
 	map.height = map.data.height
@@ -55,6 +56,7 @@ function ogmo.read_map(path, texture)
 		-- Check if layer has data
 		if layer.data ~= nil then
 			map.layers[layer.name] = layer
+			table.insert(map.layerOrder, layer.name)
 		end
 
 		if layer.data2D ~= nil then
@@ -117,9 +119,10 @@ function ogmo.read_map(path, texture)
 				end
 			end
 		else
-			-- If layer_index is omitted, assume we draw all layers
-			-- Loop through the tiles to draw
-			for name, layer in pairs(map.layers) do
+			-- If layer_index is omitted, draw all layers in OGMO order
+			for i = #map.layerOrder, 1, -1 do
+				local name = map.layerOrder[i]
+				local layer = map.layers[name]
 				for y = 0, grid_height - 1 do
 					for x = 0, grid_width - 1 do
 						local tile = layer.data[(y * grid_width + x) + 1]
@@ -127,7 +130,7 @@ function ogmo.read_map(path, texture)
 						local yy = cell_height * y
 
 						if tile ~= -1 then
-							love_draw(map.texture, map.subimages[tile + 1], origin_x + xx, origin_y + yy)
+							love_draw(map.texture, map.subimages[tile + 1], math.floor(origin_x + xx), math.floor(origin_y + yy))
 						end
 					end
 				end

@@ -983,7 +983,7 @@ function Map:drawTileLayer(layer)
 	end
 
 	for _, batch in pairs(layer.batches) do
-		lg.draw(batch, floor(layer.x), floor(layer.y))
+		lg.draw(batch, floor(layer.x + 0.5), floor(layer.y + 0.5))
 	end
 end
 
