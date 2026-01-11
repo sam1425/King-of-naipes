@@ -1,10 +1,11 @@
 local fonts = {}
+local fontSize = 32
 fontIndex = 1
 local currentFont = nil
 local files = love.filesystem.getDirectoryItems("Fonts")
 for _, file in ipairs(files) do
 	if file:match("%.ttf$") then
-		table.insert(fonts, love.graphics.newFont("Fonts/" .. file))
+		table.insert(fonts, love.graphics.newFont("Fonts/" .. file, fontSize))
 	end
 end
 
@@ -19,16 +20,15 @@ local fw, fh, rx, ry, Xorig, Yorig
 function UpdateFontCalculations()
 	if #fonts > 0 then
 		currentFont = fonts[fontIndex]
-		love.graphics.setFont(currentFont)
 
 		fw = currentFont:getWidth(cardtext)
 		fh = currentFont:getHeight()
 
-		rx = map_width - CardMapOffsetX - (fw * textscale)
-		ry = map_height - CardMapOffsetY - (fh * textscale)
-
 		Xorig = fw / 2
 		Yorig = fh / 2
+
+		rx = map_width - CardMapOffsetX - (fw * textscale / 2) - 16
+		ry = map_height - CardMapOffsetY - (fh * textscale / 2) - 16
 	end
 end
 
