@@ -12,8 +12,8 @@ end
 --font:setFilter("nearest")
 
 local cardtext = "A"
-local CardMapOffsetX = 32
-local CardMapOffsetY = 64
+local CardMapOffsetX = 48
+local CardMapOffsetY = 32
 local textscale = 4
 local fw, fh, rx, ry, Xorig, Yorig
 
@@ -38,8 +38,10 @@ function DrawFontOnMap()
 	if not currentFont then
 		return
 	end
+	love.graphics.setColor(0, 0, 0)
 	love.graphics.print(cardtext, CardMapOffsetX, CardMapOffsetY, 0, textscale, textscale)
 	love.graphics.print(cardtext, rx, ry, math.pi, textscale, textscale, Xorig, Yorig)
+	love.graphics.setColor(1, 1, 1, 1)
 end
 
 return fonts

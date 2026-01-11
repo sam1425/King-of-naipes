@@ -129,7 +129,7 @@ animations_idle[4] = newAnimation(love.graphics.newImage("assets/idle_right.png"
 current_animation = animations_idle[2]
 function draw_player()
 	local spriteNum = math.floor(current_animation.currentTime / current_animation.duration * #current_animation.quads)
-		+ 1
+			+ 1
 	local scaleX, scaleY = 2, 2
 	love.graphics.draw(
 		current_animation.spriteSheet,

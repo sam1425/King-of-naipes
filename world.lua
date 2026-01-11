@@ -1,5 +1,5 @@
 local ogmo = require("libraries/ogmo")
-local tileset = love.graphics.newImage("assets/tiles/Overworld_Tileset.png")
+local tileset = love.graphics.newImage("assets/tiles/carta_base.png")
 tileset:setFilter("nearest", "nearest")
 tileset:setWrap("clamp", "clamp")
 map = ogmo.read_map("maps/default.json", tileset)
