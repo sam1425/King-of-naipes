@@ -2,8 +2,8 @@ local player = {}
 player.x = 100
 player.y = 100
 player.speed = 200
-player.width = 50
-player.height = 60
+player.width = 32
+player.height = 36
 player.currentdirectionx = 0
 player.currentdirectiony = 0
 player.currentdirection = 2
@@ -95,7 +95,7 @@ function move(dt)
 	if current_animation.currentTime >= current_animation.duration then
 		current_animation.currentTime = current_animation.currentTime - current_animation.duration
 	end
-	cam:lookAt(player.x, player.y)
+	cam:lookAt(player.x + player.width / 2, player.y + player.height / 2)
 end
 
 function newAnimation(image, width, height, duration)

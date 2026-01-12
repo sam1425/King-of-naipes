@@ -6,6 +6,7 @@
 ]]
 
 local pathfinding = require("pathfinding")
+local world = require("world")
 pathfinding.init()
 
 local enemy = {}
@@ -13,8 +14,13 @@ local TILE_SIZE = 16
 enemy.x = 64
 enemy.y = 64
 enemy.rotation = 0
-enemy.speed = 80
+enemy.speed = 100
 enemy.path = nil
+enemy.currentTargetIndex = 1
+enemy.pathIndex = 1
+enemy.currentPath = {}
+enemy.width = 16
+enemy.height = 16
 
 function enemy.WorldTileToCoords(tx, ty)
 	local px = tx * TILE_SIZE + (TILE_SIZE / 2)
@@ -30,21 +36,113 @@ function enemy.CoordsToWorldTile(px, py)
 end
 
 function enemy:update(dt, player)
-	local ex, ey = enemy.CoordsToWorldTile(self.x, self.y)
-	local px, py = enemy.CoordsToWorldTile(player.x, player.y)
+	self.timer = (self.timer or 0) + dt
+	if self.timer > 0.2 then
+		local ex, ey = math.floor((self.x + self.width / 2) / 16) + 1, math.floor((self.y + self.height / 2) / 16) + 1
 
-	self.path = pathfinding.findPath(ex, ey, px, py)
+		--local playerCenterX = player.x + 16 -- (16 * 2 / 2)
+		--local playerCenterY = player.y + 18 -- (18 * 2 / 2)
+
+		--local px = math.floor(playerCenterX / 16) + 1
+		--local py = math.floor(playerCenterY / 16) + 1
+
+		local playerCenterX = player.x + player.width / 2
+		local playerCenterY = player.y + player.height / 2
+		local px = math.floor(playerCenterX / 16) + 1
+		local py = math.floor(playerCenterY / 16) + 1
+
+		local path = pathfinding.findPath(ex, ey, px, py)
+		if path then
+			self.currentPath = {}
+			for node in path:nodes() do
+				table.insert(self.currentPath, node)
+			end
+			self.pathIndex = #self.currentPath > 1 and 2 or 1
+		end
+		self.timer = 0
+	end
+
+	if self:hasLineOfSight(player) then
+		self:moveDirectlyToPlayer(player.x, player.y, dt)
+	else
+		self:followPath(dt)
+	end
 end
 
-function enemy:drawPath()
-	if not self.path then
+function enemy:hasLineOfSight(target)
+	--local x1, y1 = self.x, self.y
+	--local x2, y2 = target.x, target.y
+
+	local x1 = self.x + self.width / 2
+	local y1 = self.y + self.height / 2
+	-- Target center
+	local x2 = target.x + target.width / 2
+	local y2 = target.y + target.height / 2
+
+	for i = 1, 5 do
+		local t = i / 5
+		local checkX = x1 + (x2 - x1) * t
+		local checkY = y1 + (y2 - y1) * t
+
+		local tx = math.floor(checkX / 16) + 1
+		local ty = math.floor(checkY / 16) + 1
+
+		if world.data.layers[3].grid2D[ty] and world.data.layers[3].grid2D[ty][tx] ~= 0 then
+			return false
+		end
+	end
+	return true
+end
+
+function enemy:moveDirectlyToPlayer(tx, ty, dt)
+	--local dx = tx - self.x
+	--local dy = ty - self.y
+
+	-- Enemy center
+	local ex = self.x + self.width / 2
+	local ey = self.y + self.height / 2
+	-- Target center
+	local tx = player.x + player.width / 2
+	local ty = player.y + player.height / 2
+	local dx = tx - ex
+	local dy = ty - ey
+	local distance = math.sqrt(dx ^ 2 + dy ^ 2)
+
+	if distance > 5 then
+		self.x = self.x + (dx / distance) * self.speed * dt
+		self.y = self.y + (dy / distance) * self.speed * dt
+	end
+end
+
+function enemy:followPath(dt)
+	if not self.currentPath or self.pathIndex > #self.currentPath then
 		return
 	end
-	love.graphics.setColor(1, 0, 0)
-	for _, node in ipairs(self.path) do
-		local x, y = enemy.WorldTileToCoords(node.x, node.y)
-		love.graphics.circle("fill", x, y, 4)
+
+	local node = self.currentPath[self.pathIndex]
+	local targetX = (node.x - 1) * 16 + 8
+	local targetY = (node.y - 1) * 16 + 8
+
+	--local dx = targetX - self.x
+	--local dy = targetY - self.y
+	local ex = self.x + self.width / 2
+	local ey = self.y + self.height / 2
+	local dx = targetX - ex
+	local dy = targetY - ey
+	local distance = math.sqrt(dx ^ 2 + dy ^ 2)
+	--local moveDist = self.speed * dt
+
+	if distance > 1 then
+		self.x = self.x + (dx / distance) * self.speed * dt
+		self.y = self.y + (dy / distance) * self.speed * dt
+	else
+		self.pathIndex = self.pathIndex + 1
 	end
+end
+
+function enemy:draw()
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 	love.graphics.setColor(1, 1, 1)
 end
 

@@ -19,6 +19,7 @@ function pathfinding.init()
 	normalizeGrid(layer.grid2D)
 	local grid = Grid(layer.grid2D)
 	finder = Pathfinder(grid, "JPS", walkable)
+	--finder:setMode("DIAGONAL")
 	print("pathfinding initialized")
 end
 

@@ -17,7 +17,7 @@ function love.draw()
 	draw_map()
 	DrawFontOnMap()
 	draw_player()
-	enemy:drawPath()
+	enemy:draw()
 	cam:detach()
 	--love.graphics.print("Current Index: " .. fontIndex, 100, 130)
 end
@@ -29,5 +29,3 @@ function love.keypressed(key) --, scancode, isrepeat)--
 		love.graphics.setFont(currentFont)
 	end
 end
-
---love.graphics.scale(4)

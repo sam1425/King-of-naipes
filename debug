@@ -44,3 +44,39 @@ function love.keypressed(key) --, scancode, isrepeat)--
 		love.graphics.setFont(currentFont)
 	end
 end
+
+
+--enemy
+
+function enemy:drawPath1()
+	if not self.path then
+		return
+	end
+	love.graphics.setColor(1, 0, 0)
+	for _, node in ipairs(self.path) do
+		local x, y = enemy.WorldTileToCoords(node.x, node.y)
+		love.graphics.circle("fill", x, y, 4)
+	end
+	love.graphics.setColor(1, 1, 1)
+end
+
+function enemy:drawPath2()
+	if #self.currentPath == 0 then
+		return
+	end
+
+	love.graphics.setColor(1, 0, 0)
+	for i, node in ipairs(self.currentPath) do
+		local x = (node.x - 1) * 16 + 8
+		local y = (node.y - 1) * 16 + 8
+		love.graphics.circle("line", x, y, 4)
+
+		if i > 1 then
+			local prev = self.currentPath[i - 1]
+			love.graphics.line(x, y, (prev.x - 1) * 16 + 8, (prev.y - 1) * 16 + 8)
+		end
+	end
+	love.graphics.setColor(1, 1, 1)
+end
+
+
