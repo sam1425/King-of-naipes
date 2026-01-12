@@ -4,10 +4,12 @@ function love.load()
 	map = require("world")
 	fonts = require("fonts")
 	player = require("player")
+	enemy = require("enemy")
 end
 
 function love.update(dt)
 	move(dt)
+	enemy:update(dt, player)
 end
 
 function love.draw()
@@ -15,6 +17,7 @@ function love.draw()
 	draw_map()
 	DrawFontOnMap()
 	draw_player()
+	enemy:drawPath()
 	cam:detach()
 	--love.graphics.print("Current Index: " .. fontIndex, 100, 130)
 end

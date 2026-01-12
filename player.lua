@@ -1,6 +1,6 @@
 local player = {}
-player.x = 200
-player.y = 200
+player.x = 100
+player.y = 100
 player.speed = 200
 player.width = 50
 player.height = 60
@@ -130,7 +130,7 @@ animations_idle[4] = newAnimation(love.graphics.newImage("assets/idle_right.png"
 current_animation = animations_idle[2]
 function draw_player()
 	local spriteNum = math.floor(current_animation.currentTime / current_animation.duration * #current_animation.quads)
-			+ 1
+		+ 1
 	local scaleX, scaleY = 2, 2
 	love.graphics.draw(
 		current_animation.spriteSheet,

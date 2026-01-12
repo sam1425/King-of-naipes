@@ -26,12 +26,15 @@ function pathfinding.findPath(startx, starty, endx, endy)
 	if not finder then
 		error("Pathfinding not initialized. Call pathfinding.init() first.")
 	end
-	local path, lenght = finder:getPath(startx, starty, endx, endy)
+	local path, length = finder:getPath(startx, starty, endx, endy)
+	--if path then
+	--print(("Path found! Length: %.2f"):format(length))
+	--for node, count in path:iter() do
+	--print(("Step: %d - x: %d - y: %d"):format(count, node.x, node.y))
+	--end
+	--end
 	if path then
-		print(("Path found! Length: %.2f"):format(length))
-		for node, count in path:iter() do
-			print(("Step: %d - x: %d - y: %d"):format(count, node.x, node.y))
-		end
+		return path
 	end
 
 	return nil
