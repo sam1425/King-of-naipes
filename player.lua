@@ -113,6 +113,7 @@ function newAnimation(image, width, height, duration)
 	return animation
 end
 
+--running
 animations = {}
 animations[1] = newAnimation(love.graphics.newImage("assets/oldHero_up.png"), 16, 18, 1)
 animations[2] = newAnimation(love.graphics.newImage("assets/oldHero_down.png"), 16, 18, 1)

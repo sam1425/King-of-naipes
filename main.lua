@@ -4,7 +4,6 @@ function love.load()
 	map = require("world")
 	fonts = require("fonts")
 	player = require("player")
-	print(map_height, map_width)
 end
 
 function love.update(dt)

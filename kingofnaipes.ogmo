@@ -33,14 +33,14 @@
       "exportID": "15392903",
       "exportMode": 0,
       "arrayMode": 0,
-      "defaultTileset": ""
+      "defaultTileset": "New Tileset"
     },
     {
       "definition": "grid",
       "name": "collition",
       "gridSize": {"x": 16, "y": 16},
       "exportID": "15398126",
-      "arrayMode": 0,
+      "arrayMode": 1,
       "legend": {"0": "#00000000", "1": "#000000ff"}
     },
     {
@@ -50,7 +50,7 @@
       "exportID": "15390485",
       "exportMode": 0,
       "arrayMode": 0,
-      "defaultTileset": ""
+      "defaultTileset": "New Tileset"
     }
   ],
   "entities": [],
