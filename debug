@@ -19,3 +19,20 @@ function love.keypressed(key) --, scancode, isrepeat)--
 		love.event.quit(1)
 	end
 end
+
+
+--fonts 
+local files = love.filesystem.getDirectoryItems("Fonts")
+for _, file in ipairs(files) do
+	if file:match("%.ttf$") then
+		table.insert(fonts, love.graphics.newFont("Fonts/" .. file, fontSize))
+	end
+end
+
+
+recalculate
+	if #fonts > 0 then
+		--currentFont = fonts[fontIndex]
+
+	end
+

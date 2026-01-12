@@ -17,14 +17,13 @@ function love.draw()
 	DrawFontOnMap()
 	draw_player()
 	cam:detach()
-	love.graphics.print("Current Index: " .. fontIndex, 100, 130)
+	--love.graphics.print("Current Index: " .. fontIndex, 100, 130)
 end
 
 function love.keypressed(key) --, scancode, isrepeat)--
 	if key == "space" and #fonts then
 		fontIndex = fontIndex % #fonts + 1
 		currentFont = fonts[fontIndex]
-
 		love.graphics.setFont(currentFont)
 	end
 end
