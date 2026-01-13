@@ -80,3 +80,18 @@ function enemy:drawPath2()
 end
 
 
+
+	--colitions:
+	--if player.x < 0 then
+	--player.x = 0
+	--elseif player.x + player.width > map_width then
+	--player.x = map_width - player.width
+	--end
+
+	--if player.y < 0 then
+	--player.y = 0
+	--elseif player.y + player.height > map_height then
+	--player.y = map_height - player.height
+	--end
+
+

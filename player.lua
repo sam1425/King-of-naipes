@@ -1,17 +1,19 @@
+local PlayerStartPositionX = 200
+local PlayerStartPositionY = 200
+
 local player = {}
-player.x = 100
-player.y = 100
 player.speed = 200
-player.width = 32
-player.height = 36
-player.currentdirectionx = 0
-player.currentdirectiony = 0
+player.width = 12
+player.height = 16
+-- player.currentdirectionx = 0
+--player.currentdirectiony = 0
 player.currentdirection = 2
---player.moving = false
+player.collider = world:newRectangleCollider(PlayerStartPositionX, PlayerStartPositionY, player.width, player.height)
+player.collider:setCollisionClass("Player")
+player.collider:setFixedRotation(true)
 
 function get_movement()
 	local move_x, move_y = 0, 0
-
 	local left = love.keyboard.isDown("a")
 	local right = love.keyboard.isDown("d")
 	local up = love.keyboard.isDown("w")
@@ -24,7 +26,6 @@ function get_movement()
 		move_x = 1
 		player.currentdirection = 4
 	end
-
 	if up and not down then
 		move_y = -1
 		player.currentdirection = 1
@@ -33,16 +34,12 @@ function get_movement()
 		player.currentdirection = 2
 	end
 
-	player.currentdirectionx = move_x
-	player.currentdirectiony = move_y
-
+	--player.currentdirectionx = move_x
+	--player.currentdirectiony = move_y
 	return move_x, move_y
 end
 
 function move(dt)
-	--local acceleration = 400
-	--local friction = 300
-
 	local move_x, move_y = get_movement()
 	local moving = move_x ~= 0 or move_y ~= 0
 
@@ -70,32 +67,22 @@ function move(dt)
 		current_animation = animations[1]
 	end
 
-	player.x = player.x + player.speed * move_x * dt
-	player.y = player.y + player.speed * move_y * dt
+	local vx = player.speed * move_x
+	local vy = player.speed * move_y
+	player.collider:setLinearVelocity(vx, vy)
+	local px, py = player.collider:getPosition()
+	cam:lookAt(px, py)
+	--player.x = player.collider:getX()
+	--player.y = player.collider:getY()
 
 	if not moving then
 		animation_speed = 1.2
 		current_animation = animations_idle[player.currentdirection]
 	end
-
-	--colitions:
-	if player.x < 0 then
-		player.x = 0
-	elseif player.x + player.width > map_width then
-		player.x = map_width - player.width
-	end
-
-	if player.y < 0 then
-		player.y = 0
-	elseif player.y + player.height > map_height then
-		player.y = map_height - player.height
-	end
-
 	current_animation.currentTime = current_animation.currentTime + dt * animation_speed
 	if current_animation.currentTime >= current_animation.duration then
 		current_animation.currentTime = current_animation.currentTime - current_animation.duration
 	end
-	cam:lookAt(player.x + player.width / 2, player.y + player.height / 2)
 end
 
 function newAnimation(image, width, height, duration)
@@ -128,15 +115,18 @@ animations_idle[3] = newAnimation(love.graphics.newImage("assets/idle_left.png")
 animations_idle[4] = newAnimation(love.graphics.newImage("assets/idle_right.png"), 16, 18, 1)
 
 current_animation = animations_idle[2]
+
 function draw_player()
+	local offset = 4
+	local px, py = player.collider:getPosition()
 	local spriteNum = math.floor(current_animation.currentTime / current_animation.duration * #current_animation.quads)
-		+ 1
+			+ 1
 	local scaleX, scaleY = 2, 2
 	love.graphics.draw(
 		current_animation.spriteSheet,
 		current_animation.quads[spriteNum],
-		player.x,
-		player.y,
+		px - (player.width + offset),
+		py - player.height,
 		0,
 		scaleX,
 		scaleY

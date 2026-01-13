@@ -12,4 +12,5 @@ function love.wheelmoved(x, y)
 	zoom = math.max(0.5, math.min(zoom, 4))
 	cam.scale = zoom
 end
+
 return cam

@@ -7,13 +7,15 @@
 
 local pathfinding = require("pathfinding")
 local world = require("world")
+local physics = require("physics")
+
 pathfinding.init()
 
 local enemy = {}
 local TILE_SIZE = 16
 enemy.x = 64
 enemy.y = 64
-enemy.rotation = 0
+--enemy.rotation = 0
 enemy.speed = 100
 enemy.path = nil
 enemy.currentTargetIndex = 1
@@ -35,19 +37,20 @@ function enemy.CoordsToWorldTile(px, py)
 	return tileX, tileY
 end
 
+function enemy:getCenter()
+	return self.x + self.width / 2, self.y + self.height / 2
+end
+
 function enemy:update(dt, player)
+	playerx = player.collider:getX()
+	playery = player.collider:getY()
+
 	self.timer = (self.timer or 0) + dt
 	if self.timer > 0.2 then
 		local ex, ey = math.floor((self.x + self.width / 2) / 16) + 1, math.floor((self.y + self.height / 2) / 16) + 1
 
-		--local playerCenterX = player.x + 16 -- (16 * 2 / 2)
-		--local playerCenterY = player.y + 18 -- (18 * 2 / 2)
-
-		--local px = math.floor(playerCenterX / 16) + 1
-		--local py = math.floor(playerCenterY / 16) + 1
-
-		local playerCenterX = player.x + player.width / 2
-		local playerCenterY = player.y + player.height / 2
+		local playerCenterX = playerx + player.width / 2
+		local playerCenterY = playery + player.height / 2
 		local px = math.floor(playerCenterX / 16) + 1
 		local py = math.floor(playerCenterY / 16) + 1
 
@@ -63,21 +66,18 @@ function enemy:update(dt, player)
 	end
 
 	if self:hasLineOfSight(player) then
-		self:moveDirectlyToPlayer(player.x, player.y, dt)
+		self:moveDirectlyToPlayer(playerx, playery, dt)
 	else
 		self:followPath(dt)
 	end
 end
 
 function enemy:hasLineOfSight(target)
-	--local x1, y1 = self.x, self.y
-	--local x2, y2 = target.x, target.y
+	local x1 = playerx + self.width / 2
+	local y1 = playery + self.height / 2
 
-	local x1 = self.x + self.width / 2
-	local y1 = self.y + self.height / 2
-	-- Target center
-	local x2 = target.x + target.width / 2
-	local y2 = target.y + target.height / 2
+	local x2 = playerx + target.width / 2
+	local y2 = playery + target.height / 2
 
 	for i = 1, 5 do
 		local t = i / 5
@@ -95,15 +95,9 @@ function enemy:hasLineOfSight(target)
 end
 
 function enemy:moveDirectlyToPlayer(tx, ty, dt)
-	--local dx = tx - self.x
-	--local dy = ty - self.y
-
-	-- Enemy center
 	local ex = self.x + self.width / 2
 	local ey = self.y + self.height / 2
-	-- Target center
-	local tx = player.x + player.width / 2
-	local ty = player.y + player.height / 2
+
 	local dx = tx - ex
 	local dy = ty - ey
 	local distance = math.sqrt(dx ^ 2 + dy ^ 2)
@@ -123,14 +117,11 @@ function enemy:followPath(dt)
 	local targetX = (node.x - 1) * 16 + 8
 	local targetY = (node.y - 1) * 16 + 8
 
-	--local dx = targetX - self.x
-	--local dy = targetY - self.y
 	local ex = self.x + self.width / 2
 	local ey = self.y + self.height / 2
 	local dx = targetX - ex
 	local dy = targetY - ey
 	local distance = math.sqrt(dx ^ 2 + dy ^ 2)
-	--local moveDist = self.speed * dt
 
 	if distance > 1 then
 		self.x = self.x + (dx / distance) * self.speed * dt
