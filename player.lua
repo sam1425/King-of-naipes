@@ -5,8 +5,6 @@ local player = {}
 player.speed = 200
 player.width = 12
 player.height = 16
--- player.currentdirectionx = 0
---player.currentdirectiony = 0
 player.currentdirection = 2
 player.collider = world:newRectangleCollider(PlayerStartPositionX, PlayerStartPositionY, player.width, player.height)
 player.collider:setCollisionClass("Player")
@@ -33,9 +31,6 @@ function get_movement()
 		move_y = 1
 		player.currentdirection = 2
 	end
-
-	--player.currentdirectionx = move_x
-	--player.currentdirectiony = move_y
 	return move_x, move_y
 end
 

@@ -10,6 +10,8 @@ enemySpawner.spawnInterval = 2 -- seconds between spawns
 function enemySpawner:init(mapWidth, mapHeight)
 	self.mapWidth = mapWidth
 	self.mapHeight = mapHeight
+	self.enemies = {}
+	self.spawnTimer = 0
 end
 
 function enemySpawner:isValidSpawnPoint(x, y)
@@ -38,26 +40,11 @@ function enemySpawner:spawnEnemy()
 	until self:isValidSpawnPoint(x, y) or attempts >= maxAttempts
 
 	if self:isValidSpawnPoint(x, y) then
-		local newEnemy = {
-			x = x,
-			y = y,
-			rotation = 0,
-			speed = 100,
-			path = nil,
-			currentTargetIndex = 1,
-			pathIndex = 1,
-			currentPath = {},
-			width = 16,
-			height = 16,
-			timer = 0,
-		}
-		for k, v in pairs(enemy) do
-			if type(v) == "function" then
-				newEnemy[k] = v
-			end
-		end
+		local newEnemy = enemy.new(x, y)
 		table.insert(self.enemies, newEnemy)
+		return newEnemy
 	end
+	return nil
 end
 
 function enemySpawner:update(dt, player)
@@ -74,7 +61,9 @@ end
 
 function enemySpawner:draw()
 	for i, e in ipairs(self.enemies) do
-		e:draw()
+		if e.draw then
+			e:draw()
+		end
 	end
 end
 
